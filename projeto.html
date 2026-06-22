@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GET — Gestão de Equipamentos Tecnológicos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">GET</span>
+      <span class="brand-sub" data-i18n="brandSub">Gestão de Equipamentos</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-page="login">
+        <span class="nav-icon">⏻</span><span data-i18n="navLogin">Login</span>
+      </button>
+      <button class="nav-item" data-page="equipamentos">
+        <span class="nav-icon">▭</span><span data-i18n="navEquip">Equipamentos</span>
+      </button>
+      <button class="nav-item" data-page="registar" data-role="admin">
+        <span class="nav-icon">+</span><span data-i18n="navRegistar">Registar Equipamento</span>
+      </button>
+      <button class="nav-item" data-page="pedir" data-role="aluno">
+        <span class="nav-icon">→</span><span data-i18n="navPedir">Pedir Empréstimo</span>
+      </button>
+      <button class="nav-item" data-page="gestao" data-role="admin">
+        <span class="nav-icon">✓</span><span data-i18n="navGestao">Gestão de Pedidos</span>
+      </button>
+      <button class="nav-item" data-page="devolucoes" data-role="admin">
+        <span class="nav-icon">↩</span><span data-i18n="navDevolucoes">Devoluções</span>
+      </button>
+      <button class="nav-item" data-page="historico">
+        <span class="nav-icon">≡</span><span data-i18n="navHistorico">Histórico</span>
+      </button>
+      <button class="nav-item" data-page="config">
+        <span class="nav-icon">⚙</span><span data-i18n="navConfig">Configurações</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="session-box" id="sessionBox">
+        <span class="session-label" data-i18n="noSession">Sem sessão</span>
+      </div>
+      <button class="btn-logout hidden" id="btnLogout" data-i18n="logout">Terminar sessão</button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR (mobile) -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <span class="topbar-title" data-i18n="brandSub">Gestão de Equipamentos</span>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- PAGE: LOGIN -->
+    <section class="page active" id="page-login">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowAccess">Acesso ao sistema</p>
+        <h1 data-i18n="loginTitle">Entrar</h1>
+      </div>
+
+      <div class="login-grid">
+        <div class="card login-card">
+          <h2 data-i18n="loginAs">Entrar como</h2>
+          <div class="role-switch">
+            <button class="role-btn active" data-role-select="aluno" data-i18n="roleAluno">Aluno</button>
+            <button class="role-btn" data-role-select="admin" data-i18n="roleAdmin">Administrador</button>
+          </div>
+
+          <form id="loginForm" class="form">
+            <label class="field">
+              <span data-i18n="fieldName">Nome</span>
+              <input type="text" id="loginNome" required>
+            </label>
+            <label class="field" id="loginNumeroField">
+              <span data-i18n="fieldNumAluno">Número de aluno</span>
+              <input type="text" id="loginNumero">
+            </label>
+            <button type="submit" class="btn btn-primary" data-i18n="btnEnter">Entrar</button>
+          </form>
+        </div>
+
+        <div class="card info-card">
+          <h2 data-i18n="aboutTitle">Sobre este sistema</h2>
+          <p data-i18n="aboutText">Plataforma de gestão de empréstimo de equipamentos tecnológicos da Escola Profissional do Fundão. Permite a alunos consultar e pedir equipamentos, e a administradores gerir o inventário e aprovar pedidos.</p>
+          <ul class="about-list">
+            <li data-i18n="aboutItem1">Registo e consulta de equipamentos</li>
+            <li data-i18n="aboutItem2">Pedido, aprovação e devolução de empréstimos</li>
+            <li data-i18n="aboutItem3">Histórico completo por aluno</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: EQUIPAMENTOS -->
+    <section class="page" id="page-equipamentos">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowInventory">Inventário</p>
+        <h1 data-i18n="equipTitle">Equipamentos Disponíveis</h1>
+      </div>
+      <div class="toolbar">
+        <input type="search" id="equipSearch" class="search-input" data-i18n-ph="searchPlaceholder" placeholder="Pesquisar equipamento...">
+        <span class="count-badge" id="equipCount">0</span>
+      </div>
+      <div class="grid-cards" id="equipList"></div>
+    </section>
+
+    <!-- PAGE: REGISTAR EQUIPAMENTO (admin) -->
+    <section class="page" id="page-registar">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowAdmin">Administração</p>
+        <h1 data-i18n="registarTitle">Registar Equipamento</h1>
+      </div>
+      <div class="card form-card">
+        <form id="registarForm" class="form">
+          <label class="field">
+            <span data-i18n="fieldEquipName">Nome do equipamento</span>
+            <input type="text" id="regNome" required placeholder="Ex: Portátil Dell Latitude">
+          </label>
+          <label class="field">
+            <span data-i18n="fieldEquipType">Tipo</span>
+            <select id="regTipo">
+              <option value="Portátil" data-i18n="typeLaptop">Portátil</option>
+              <option value="Tablet" data-i18n="typeTablet">Tablet</option>
+              <option value="Projetor" data-i18n="typeProjector">Projetor</option>
+              <option value="Câmara" data-i18n="typeCamera">Câmara</option>
+              <option value="Outro" data-i18n="typeOther">Outro</option>
+            </select>
+          </label>
+          <label class="field">
+            <span data-i18n="fieldSerial">Número de série</span>
+            <input type="text" id="regSerie" required placeholder="SN-00000">
+          </label>
+          <button type="submit" class="btn btn-primary" data-i18n="btnRegister">Registar</button>
+        </form>
+      </div>
+      <h2 class="subheading" data-i18n="registeredList">Equipamentos registados</h2>
+      <div class="table-wrap">
+        <table class="data-table" id="regTable">
+          <thead>
+            <tr>
+              <th data-i18n="thName">Nome</th><th data-i18n="thType">Tipo</th><th data-i18n="thSerial">Nº Série</th><th data-i18n="thStatus">Estado</th><th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: PEDIR EMPRÉSTIMO (aluno) -->
+    <section class="page" id="page-pedir">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowRequest">Pedido</p>
+        <h1 data-i18n="pedirTitle">Pedir Empréstimo</h1>
+      </div>
+      <p class="hint" data-i18n="pedirHint">Escolhe um equipamento disponível para submeter o teu pedido.</p>
+      <div class="grid-cards" id="pedirList"></div>
+    </section>
+
+    <!-- PAGE: GESTÃO DE PEDIDOS (admin) -->
+    <section class="page" id="page-gestao">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowAdmin">Administração</p>
+        <h1 data-i18n="gestaoTitle">Gestão de Pedidos</h1>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="gestaoTable">
+          <thead>
+            <tr>
+              <th data-i18n="thStudent">Aluno</th><th data-i18n="thEquip">Equipamento</th><th data-i18n="thDate">Data</th><th data-i18n="thStatus">Estado</th><th data-i18n="thAction">Ação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: DEVOLUÇÕES (admin) -->
+    <section class="page" id="page-devolucoes">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowAdmin">Administração</p>
+        <h1 data-i18n="devolucoesTitle">Registar Devolução</h1>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="devolucoesTable">
+          <thead>
+            <tr>
+              <th data-i18n="thStudent">Aluno</th><th data-i18n="thEquip">Equipamento</th><th data-i18n="thLoanDate">Data de empréstimo</th><th data-i18n="thAction">Ação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: HISTÓRICO -->
+    <section class="page" id="page-historico">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowRecords">Registos</p>
+        <h1 data-i18n="historicoTitle">Histórico de Empréstimos</h1>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="historicoTable">
+          <thead>
+            <tr>
+              <th data-i18n="thStudent">Aluno</th><th data-i18n="thEquip">Equipamento</th><th data-i18n="thRequestDate">Pedido em</th><th data-i18n="thReturnDate">Devolvido em</th><th data-i18n="thStatus">Estado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: CONFIGURAÇÕES -->
+    <section class="page" id="page-config">
+      <div class="page-head">
+        <p class="eyebrow" data-i18n="eyebrowSystem">Sistema</p>
+        <h1 data-i18n="configTitle">Configurações</h1>
+      </div>
+
+      <div class="config-grid">
+
+        <div class="card config-card">
+          <h2 data-i18n="cfgThemeTitle">Tema</h2>
+          <p class="config-desc" data-i18n="cfgThemeDesc">Escolhe entre claro e escuro.</p>
+          <div class="role-switch">
+            <button class="role-btn" data-theme-select="light" data-i18n="cfgLight">Claro</button>
+            <button class="role-btn" data-theme-select="dark" data-i18n="cfgDark">Escuro</button>
+          </div>
+        </div>
+
+        <div class="card config-card">
+          <h2 data-i18n="cfgIntensityTitle">Intensidade do tema</h2>
+          <p class="config-desc" data-i18n="cfgIntensityDesc">Ajusta o contraste entre um tom mais suave e um mais forte.</p>
+          <input type="range" id="intensityRange" min="0" max="100" value="50" class="slider">
+          <div class="slider-labels">
+            <span data-i18n="cfgSoft">Suave</span>
+            <span data-i18n="cfgStrong">Forte</span>
+          </div>
+        </div>
+
+        <div class="card config-card">
+          <h2 data-i18n="cfgAccentTitle">Cor de destaque</h2>
+          <p class="config-desc" data-i18n="cfgAccentDesc">A cor usada em botões e elementos principais.</p>
+          <div class="accent-row" id="accentRow">
+            <button class="accent-dot" data-accent="#2E5EAA" style="background:#2E5EAA"></button>
+            <button class="accent-dot" data-accent="#1F8A5E" style="background:#1F8A5E"></button>
+            <button class="accent-dot" data-accent="#B5562E" style="background:#B5562E"></button>
+            <button class="accent-dot" data-accent="#7A4FB5" style="background:#7A4FB5"></button>
+            <button class="accent-dot" data-accent="#B5304E" style="background:#B5304E"></button>
+          </div>
+        </div>
+
+        <div class="card config-card">
+          <h2 data-i18n="cfgFontSizeTitle">Tamanho da letra</h2>
+          <p class="config-desc" data-i18n="cfgFontSizeDesc">Define o tamanho do texto em todo o site.</p>
+          <div class="role-switch three">
+            <button class="role-btn" data-fontsize-select="small" data-i18n="cfgSmall">Pequeno</button>
+            <button class="role-btn" data-fontsize-select="medium" data-i18n="cfgMedium">Médio</button>
+            <button class="role-btn" data-fontsize-select="large" data-i18n="cfgLarge">Grande</button>
+          </div>
+        </div>
+
+        <div class="card config-card">
+          <h2 data-i18n="cfgLangTitle">Idioma</h2>
+          <p class="config-desc" data-i18n="cfgLangDesc">Idioma usado em todo o site.</p>
+          <div class="role-switch">
+            <button class="role-btn" data-lang-select="pt">Português</button>
+            <button class="role-btn" data-lang-select="en">English</button>
+          </div>
+        </div>
+
+        <div class="card config-card config-card-danger">
+          <h2 data-i18n="cfgResetTitle">Repor dados</h2>
+          <p class="config-desc" data-i18n="cfgResetDesc">Remove todos os equipamentos, pedidos e histórico guardados neste navegador. Esta ação não pode ser desfeita.</p>
+          <button class="btn btn-danger" id="btnReset" data-i18n="cfgResetBtn">Limpar todos os dados</button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
